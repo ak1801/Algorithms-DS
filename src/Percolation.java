@@ -1,4 +1,3 @@
-package com.algo.datatypes.Percolation;
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 /*---------------------------------------------------------
@@ -20,13 +19,16 @@ public class Percolation {
 	 * Sets Virtual Top and Virtual Bottom
 	 * Complexity : N^2
 	 */
-	public Percolation(int N){
+	public Percolation(int N) {
+		if (N <= 0) {
+			throw new IllegalArgumentException("N cannot be less than or equal to 0");
+		}
 		grid = new int[N+1][N+1];
 		rowSize = grid[0].length;
-		wquf = new WeightedQuickUnionUF((N+1)*(N+1));
+		wquf = new WeightedQuickUnionUF( ( N+1 ) * ( N+1 ) );
 		this.N = N;
 		
-		if(N!=1){
+		if (N != 1){
 			setVirtualTopAndBottom();
 		}
 	}	
@@ -34,13 +36,14 @@ public class Percolation {
 	/*
 	 * Sets Virtual Top and Virtual Bottom
 	 */
-	private void setVirtualTopAndBottom(){
+	private void setVirtualTopAndBottom() {
 		// virtual top
-		for(int i=N+2; i<=N+N+1; i++){
+		for (int i = N + 2; i <= N + N + 1; i++) {
 			wquf.union(0, i);
 		}
+		
 		// virtual bottom
-		for(int j=N*(N+1)+1; j<=N*(N+1)+N; j++){
+		for (int j = N * (N + 1) + 1; j <= N * (N + 1) + N; j++) {
 			wquf.union(1, j);
 		}
 	}
@@ -50,12 +53,12 @@ public class Percolation {
 	 * 
 	 * @throws IndexOutOfBoundsException unless 1<p<N
 	 */
-	private void validate(int row, int col){
-		if(row<1 || row>N){
+	private void validate(int row, int col) {
+		if (row < 1 || row > N) {
 			throw new IndexOutOfBoundsException("Index "+row+" should be between 1 & "+N);
 		}
 		
-		if(col<1 || col>N){
+		if (col < 1 || col > N) {
 			throw new IndexOutOfBoundsException("Index "+col+" should be between 1 & "+N);
 		}
 	}
@@ -65,7 +68,7 @@ public class Percolation {
 	 * 
 	 * @return true if percolates, else false
 	 */
-	public boolean percolates(){
+	public boolean percolates() {
 		return wquf.connected(0, 1);
 	}
 	
@@ -77,9 +80,9 @@ public class Percolation {
 	 * @return true if site is open, else false
 	 * @throws IndexOutOfBoundsException unless 1<p<N
 	 */
-	public boolean isOpen(int row, int col){
+	public boolean isOpen(int row, int col) {
 		validate(row, col);
-		if(grid[row][col]==1){
+		if( grid[row][col] == 1) {
 			return true;
 		}
 		else return false;
@@ -93,10 +96,10 @@ public class Percolation {
 	 * @return true if site is connected to top, else false
 	 * @throws IndexOutOfBoundsException unless 1<p<N
 	 */
-	public boolean isFull(int row, int col){
+	public boolean isFull(int row, int col) {
 		validate(row, col);
 		
-		if(grid[row][col]==1 && wquf.connected(0, xyTo1D(row, col))){
+		if( grid[row][col] == 1 && wquf.connected(0, xyTo1D ( row, col)) ) {
 			return true;
 		}
 		else return false;
@@ -109,14 +112,14 @@ public class Percolation {
 	 * @param col
 	 * @throws IndexOutOfBoundsException unless 1<p<N
 	 */
-	public void open(int row, int col){
+	public void open(int row, int col) {
 		
 		validate(row, col);
-		grid[row][col]=1;
-		if(N==1){
+		grid[row][col] = 1;
+		if(N == 1) {
 			setVirtualTopAndBottom();
 		}
-		else{
+		else {
 			checkAndConnectNeighbours(row, col);
 		}
 	}
@@ -128,9 +131,9 @@ public class Percolation {
 	 * @param col
 	 * @throws IndexOutOfBoundsException unless 1<p<N
 	 */
-	private void connectLeft(int i, int j){
+	private void connectLeft(int i, int j) {
 		int p = xyTo1D(i, j);
-		if(isOpen(i, j-1)){
+		if(isOpen( i, j-1 )) {
 			int q = xyTo1D(i, j-1);
 			wquf.union(p, q);
 		}
@@ -143,9 +146,9 @@ public class Percolation {
 	 * @param col
 	 * @throws IndexOutOfBoundsException unless 1<p<N
 	 */
-	private void connectRight(int i, int j){
+	private void connectRight(int i, int j) {
 		int p = xyTo1D(i, j);
-		if(isOpen(i, j+1)){
+		if(isOpen(i, j+1)) {
 			int q = xyTo1D(i, j+1);
 			wquf.union(p, q);
 		}
@@ -158,9 +161,9 @@ public class Percolation {
 	 * @param col
 	 * @throws IndexOutOfBoundsException unless 1<p<N
 	 */
-	private void connectTop(int i, int j){
+	private void connectTop(int i, int j) {
 		int p = xyTo1D(i, j);
-		if(isOpen(i-1, j)){
+		if(isOpen(i-1, j)) {
 			int q = xyTo1D(i-1, j);
 			wquf.union(p, q);
 		}
@@ -173,9 +176,9 @@ public class Percolation {
 	 * @param col
 	 * @throws IndexOutOfBoundsException unless 1<p<N
 	 */
-	private void connectBottom(int i, int j){
+	private void connectBottom(int i, int j) {
 		int p = xyTo1D(i, j);
-		if(isOpen(i+1, j)){
+		if(isOpen(i+1, j)) {
 			int q = xyTo1D(i+1, j);
 			wquf.union(p, q);
 		}
@@ -188,38 +191,38 @@ public class Percolation {
 	 * @param row represents row value in grid
 	 * @param col represents column value in grid
 	 */
-	private void checkAndConnectNeighbours(int row, int col){
+	private void checkAndConnectNeighbours(int row, int col) {
 		//int p = xyTo1D(row, col);
 		//left corner
-		if(row==1 && col==1){
+		if(row == 1 && col == 1) {
 			connectRight(row, col);
 			connectBottom(row, col);
 			return;
 		}
 		
 		//left bottom corner
-		else if(row==rowSize-1 && col==1){
+		else if(row == rowSize-1 && col == 1) {
 			connectRight(row, col);
 			connectTop(row, col);
 			return;
 		}
 		
 		//upper right corner
-		else if(row==1 && col==rowSize-1){
+		else if(row == 1 && col == rowSize-1) {
 			connectLeft(row, col);
 			connectBottom(row, col);
 			return;
 		}
 		
 		//bottom right corner
-		else if(row==rowSize-1 && col==rowSize-1){
+		else if(row == rowSize-1 && col == rowSize-1) {
 			connectLeft(row, col);
 			connectTop(row, col);
 			return;
 		}
 		
 		//first row
-		else if(row==1 && col>1 && col<rowSize-1){
+		else if(row == 1 && col > 1 && col < rowSize-1) {
 			connectLeft(row, col);
 			connectRight(row, col);
 			connectBottom(row, col);
@@ -227,7 +230,7 @@ public class Percolation {
 		}
 		
 		//first column
-		else if(col==1 && row>1){
+		else if(col == 1 && row > 1) {
 			connectTop(row, col);
 			connectRight(row, col);
 			connectBottom(row, col);
@@ -235,14 +238,14 @@ public class Percolation {
 		}
 		
 		//last row
-		else if(row==rowSize-1 && col>1){
+		else if(row == rowSize-1 && col > 1){
 			connectTop(row, col);
 			connectLeft(row, col);
 			connectRight(row, col);
 			return;
 		}
 		//last column
-		else if(col==rowSize-1 && row>1){
+		else if(col == rowSize-1 && row > 1){
 			connectLeft(row, col);
 			connectTop(row, col);
 			connectBottom(row, col);
@@ -264,7 +267,7 @@ public class Percolation {
 	 * @param col represents the y coordinate
 	 * @return 1D value for row and column
 	 */
-	private int xyTo1D(int row, int col){
-		return grid[0].length*(row)+(col);
+	private int xyTo1D(int row, int col) {
+		return grid[0].length*(row) + (col);
 	}
 }
