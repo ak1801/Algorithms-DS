@@ -26,11 +26,11 @@ import edu.princeton.cs.algs4.StdRandom;
  */
 public class RandomizedQueue<Item> implements Iterable<Item> {
 
-	private Item[] itemArray = null;
-	private int size = 0;
+	private Item[] items = null;
+	private int N = 0;
 	
 	public RandomizedQueue(){
-		itemArray = (Item[]) new Object[1]; 
+		items = (Item[]) new Object[1]; 
 	}
 	
 	/**
@@ -39,7 +39,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 	 * @return true if this RandomizedQueue is empty; false otherwise
 	 */
 	public boolean isEmpty() {
-		return size() == 0;
+		return N == 0;
 	}
 
 	/**
@@ -48,11 +48,11 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 	 * @return the number of items in the queue
 	 */
 	public int size() {
-		return size;
+		return N;
 	}
 	
 	private int length() {
-		return itemArray.length;
+		return items.length;
 	}
 	
 	/**
@@ -67,32 +67,32 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 			throw new NullPointerException();
 		}
 		
-		if(size() > 0 && size() == length()) {
-			resize(2 * length());
-		}
+		if(N == items.length) resize(2 * N);
+		items[N++] = item;
+
+		// logic to shuffle randomly
+		int random = StdRandom.uniform(N);
+		Item randomItem = items[random];
+		items[random] = items[N-1];
+		items[N-1] = randomItem;
 		
-		int index = StdRandom.uniform(length());
-		
+		/*int index = StdRandom.uniform(length());
 		while(itemArray[index] != null) {
 			index = StdRandom.uniform(length());
 		}
-		
-		itemArray[index] = item;
-		size++;
+		items[index] = item;
+		N++;
+		*/
 	}
 	
 	private void resize(int capacity) {
 
 		Item[] copy = (Item[]) new Object[capacity];
 		
-		int j=0;
-		for(int i=0; i<length(); j++,i++) {
-			if(itemArray[i]!=null) {
-				copy[j] = itemArray[i];
-			}
-			//else continue;
+		for(int i=0; i<N; i++) {
+			copy[i] = items[i];
 		}
-		itemArray = copy;
+		items = copy;
 	}
 
 	/**
@@ -102,24 +102,24 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 	 */
 	public Item dequeue() {
 
-		if (size() > 0) {
-			
-			if(size() == length()/4) resize(length()/2);	
-			int index = StdRandom.uniform(length());
-			
-			while(itemArray[index] == null) {
-				index = StdRandom.uniform(length());
-			}
+		if(isEmpty()) throw new NoSuchElementException();
 
-			Item item = itemArray[index];
-			itemArray[index] = null;
-			
-			size--;
-			return item;
-			
-		} else {
-			throw new NoSuchElementException();
+		Item item = items[N-1];
+		items[N-1] = null;
+		N--;
+		
+		if(N > 0 && N == items.length/4) resize(items.length/2);
+		
+		/*int index = StdRandom.uniform(length());
+		while(items[index] == null) {
+			index = StdRandom.uniform(length());
 		}
+
+		Item item = items[index];
+		items[index] = null;
+		N--;
+		*/	
+		return item;
 	}
 
 	/**
@@ -129,18 +129,15 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 	 */
 	public Item sample() {
 		
-		if (size() > 0) {
-			int index = StdRandom.uniform(length());
+		if(isEmpty()) throw new NoSuchElementException();
+		
+		int index = StdRandom.uniform(N);
 			
-			while(itemArray[index] == null) {
+			/*while(items[index] == null) {
 				index = StdRandom.uniform(length());
-			}
+			}*/
 
-			return itemArray[index];
-		}
-		else {
-			throw new NoSuchElementException();
-		}
+		return items[index];
 	}
 
 	/**
@@ -163,25 +160,25 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 		@SuppressWarnings("unchecked")
 		public RandomizedQueueIterator() {
 			
-			if(itemArray.length > 0) {
-				int j=0;
-				for(int i=0; i<length(); j++,i++) {
-					if(itemArray[i]!=null) {
-						temp[j] = itemArray[i];
-					}
+			if(N > 0 && items.length > 0) {
+				temp = (Item[]) new Object[N];
+				for(int i=0; i<N; i++) {
+					temp[i] = items[i];
 				}
-				itemArray = temp;
-				StdRandom.shuffle(itemArray);
+				StdRandom.shuffle(temp);
 			}
+			//items = temp;
+			
+			//temp = null;
 		}
 
 		@Override
 		public boolean hasNext() {
-			if(size() == 0 || length() == 0) {
+			if(N == 0 || temp.length == 0) {
 				return false;
 			}
-			if(itemArray != null) {
-				return index < itemArray.length;
+			if(items != null) {
+				return index < temp.length;
 			}
 			return false;
 		}
