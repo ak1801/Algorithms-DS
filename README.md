@@ -1,2 +1,2 @@
 # Algorithms-DS
-Practical Approach and use cases to algorithms and datastructures
+Solution to Programming problems of Algorithms1 course at Coursera - https://class.coursera.org/algs4partI
