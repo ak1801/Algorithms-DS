@@ -22,37 +22,36 @@ class ZeroSumSubArray{
 					indexMap.put(i, list);
 				}
 			}
-			
-			if(sum == 0) {
-				if(indexMap.get(sum)!=null) {
-					ArrayList<Integer> list = (ArrayList<Integer>) indexMap.get(i);
-					list.add(i);
-				} else {
-					ArrayList<Integer> list = new ArrayList<Integer>();
-					list.add(i);
-					indexMap.put(sum, list);
-				}
-			}
 
 			if(hashing.get(sum)!=null) {
 				
-				ArrayList<Integer> elements = hashing.get(sum);
+				if(sum == 0) {
+					ArrayList<Integer> list = (ArrayList<Integer>) indexMap.get(0);
+					list.add(i);
+				}
 				
-				for(int elem : elements) {
+				ArrayList<Integer> indexes = hashing.get(sum);
+				
+				for(int index : indexes) {
 					
-					if(indexMap.get(elem+1)!=null) {
-						ArrayList<Integer> list = (ArrayList<Integer>) indexMap.get(elem+1);
+					if(indexMap.get(index+1)!=null) {
+						ArrayList<Integer> list = (ArrayList<Integer>) indexMap.get(index+1);
 						list.add(i);
 					} else {
 						ArrayList<Integer> list = new ArrayList<Integer>();
 						list.add(i);
-						indexMap.put(elem+1, list);
+						indexMap.put(index+1, list);
 					}
 					//indexMap.put(elem+1, i);
 				}
 
 				hashing.get(sum).add(i);
 			} else {
+				if(sum == 0) {
+					ArrayList<Integer> list = new ArrayList<Integer>();
+					list.add(i);
+					indexMap.put(0, list);
+				}
 				ArrayList<Integer> list = new ArrayList<Integer>();
 				list.add(i);
 				hashing.put(sum, list);
@@ -71,7 +70,9 @@ class ZeroSumSubArray{
 	}
 	
 	public static void main(String args[]) {
-		int[] arr = {6, 3, -1, -3, 4, -2, 2, 4, 6, -12, -7};
+		int[] arr = {6, 3, -1, -3, 4, -2, 2, 4, 6, -12, -7, 1, -1};
+		//int[] arr = {-1, -3, 4, -2, 2, 4};
+		//int[] arr = {3, 4, -7, -3, -4, 7};
 		filterZeroSumSubArrays(arr);
 		print();
 	}
